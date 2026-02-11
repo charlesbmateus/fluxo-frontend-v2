@@ -5,8 +5,8 @@
       <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
         <h1 style="color: var(--color-primary-600); margin: 0;">Fluxo</h1>
         <NSpace>
-          <NButton text @click="router.push('/auth/login')">Sign In</NButton>
-          <NButton type="primary" @click="router.push('/auth/register')">Get Started</NButton>
+          <NButton text @click="goToLogin">Sign In</NButton>
+          <NButton type="primary" @click="goToRegister">Get Started</NButton>
         </NSpace>
       </div>
     </header>
@@ -20,10 +20,10 @@
             Modern marketplace dashboard for service providers and customers
           </p>
           <NSpace justify="center">
-            <NButton size="large" @click="router.push('/auth/register')" style="background-color: white; color: var(--color-primary-600);">
+            <NButton size="large" @click="goToRegister" style="background-color: white; color: var(--color-primary-600);">
               Get Started
             </NButton>
-            <NButton size="large" secondary @click="router.push('/auth/login')" style="border-color: white; color: white;">
+            <NButton size="large" secondary @click="goToLogin" style="border-color: white; color: white;">
               Sign In
             </NButton>
           </NSpace>
@@ -117,7 +117,7 @@
           <p style="font-size: 18px; color: var(--color-gray-600); margin: 0 0 32px 0;">
             Join Fluxo today and start managing your services efficiently.
           </p>
-          <NButton size="large" type="primary" @click="router.push('/auth/register')">
+          <NButton size="large" type="primary" @click="goToRegister">
             Create Your Account
           </NButton>
         </div>
@@ -139,10 +139,18 @@ definePageMeta({
 })
 
 const router = useRouter()
-const authStore = useAuthStore()
 
-// Redirect to dashboard if already authenticated
+const goToLogin = () => {
+  router.push('/auth/login')
+}
+
+const goToRegister = () => {
+  router.push('/auth/register')
+}
+
+// Only check authentication on client side
 onMounted(() => {
+  const authStore = useAuthStore()
   if (authStore.isAuthenticated) {
     router.push('/dashboard')
   }

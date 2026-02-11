@@ -3,6 +3,8 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   
+  ssr: false, // Disable SSR for now to avoid store issues
+  
   modules: [
     '@pinia/nuxt',
     '@vueuse/nuxt',

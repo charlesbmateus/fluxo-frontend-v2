@@ -6,7 +6,7 @@
       </div>
 
       <NGrid :cols="3" :x-gap="16" :y-gap="16" responsive="screen">
-        <NGridItem v-for="service in serviceStore.activeServices" :key="service.id">
+        <NGridItem v-for="service in services" :key="service.id">
           <NCard :title="service.title" hoverable style="cursor: pointer;" @click="handleServiceClick(service.id)">
             <p style="margin: 0 0 12px 0; color: var(--color-gray-600);">
               {{ service.description }}
@@ -14,7 +14,7 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <strong style="font-size: 18px; color: var(--color-primary-600);">
-                {{ formatPrice(service.price, service.currency as any) }}
+                {{ formatPrice(service.price, service.currency) }}
               </strong>
               
               <NTag v-if="service.category" type="info">
@@ -35,7 +35,7 @@
         </NGridItem>
       </NGrid>
 
-      <div v-if="serviceStore.activeServices.length === 0" style="text-align: center; padding: 40px; color: var(--color-gray-500);">
+      <div v-if="services.length === 0" style="text-align: center; padding: 40px; color: var(--color-gray-500);">
         No services available
       </div>
     </NSpace>
@@ -49,8 +49,9 @@ definePageMeta({
 })
 
 const router = useRouter()
-const serviceStore = useServiceStore()
 const { formatPrice } = useCurrency()
+
+const services = ref([])
 
 const handleServiceClick = (serviceId: number) => {
   router.push(`/dashboard/services/${serviceId}`)
@@ -61,6 +62,8 @@ const handleBookService = (serviceId: number) => {
 }
 
 onMounted(async () => {
+  const serviceStore = useServiceStore()
   await serviceStore.fetchServices()
+  services.value = serviceStore.activeServices
 })
 </script>

@@ -52,7 +52,7 @@
                   </NButton>
                   
                   <!-- Notifications -->
-                  <NBadge :value="notificationStore.unreadCount" :max="99">
+                  <NBadge :value="unreadCount" :max="99">
                     <NButton text @click="showNotifications = true">
                       <template #icon>
                         <span style="font-size: 20px;">🔔</span>
@@ -65,9 +65,9 @@
                     <NButton text>
                       <NSpace align="center">
                         <NAvatar size="small" round>
-                          {{ authStore.user?.name?.charAt(0).toUpperCase() }}
+                          {{ user?.name?.charAt(0).toUpperCase() || 'U' }}
                         </NAvatar>
-                        <span>{{ authStore.user?.name }}</span>
+                        <span>{{ user?.name || 'User' }}</span>
                       </NSpace>
                     </NButton>
                   </NDropdown>
@@ -86,7 +86,7 @@
               <h3 style="margin-bottom: 16px;">Notifications</h3>
               <NSpace vertical>
                 <NCard
-                  v-for="notification in notificationStore.notifications"
+                  v-for="notification in notifications"
                   :key="notification.id"
                   size="small"
                   :style="{ cursor: 'pointer', opacity: notification.read_at ? 0.6 : 1 }"
@@ -114,13 +114,14 @@ import type { MenuOption } from 'naive-ui'
 
 const router = useRouter()
 const route = useRoute()
-const authStore = useAuthStore()
-const notificationStore = useNotificationStore()
 const { selectedCurrency, setCurrency } = useCurrency()
 
 const isDark = useState('isDark', () => false)
 const collapsed = ref(false)
 const showNotifications = ref(false)
+const user = ref<any>(null)
+const notifications = ref<any[]>([])
+const unreadCount = ref(0)
 
 const theme = computed(() => isDark.value ? darkTheme : null)
 
@@ -192,6 +193,7 @@ const handleMenuSelect = (key: string) => {
 
 const handleUserMenuSelect = async (key: string) => {
   if (key === 'logout') {
+    const authStore = useAuthStore()
     await authStore.logout()
     router.push('/auth/login')
   } else if (key === 'profile') {
@@ -210,6 +212,7 @@ const toggleTheme = () => {
 }
 
 const handleNotificationClick = async (notification: any) => {
+  const notificationStore = useNotificationStore()
   await notificationStore.markAsRead(notification.id)
 }
 
@@ -218,8 +221,19 @@ const formatDate = (dateString: string) => {
   return date.toLocaleDateString() + ' ' + date.toLocaleTimeString()
 }
 
-onMounted(() => {
-  notificationStore.fetchNotifications()
+onMounted(async () => {
+  const authStore = useAuthStore()
+  const notificationStore = useNotificationStore()
+  
+  user.value = authStore.user
+  
+  try {
+    await notificationStore.fetchNotifications()
+    notifications.value = notificationStore.notifications
+    unreadCount.value = notificationStore.unreadCount
+  } catch (error) {
+    console.error('Failed to fetch notifications:', error)
+  }
   
   if (process.client) {
     const savedTheme = localStorage.getItem('fluxo_theme')

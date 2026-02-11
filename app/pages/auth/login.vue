@@ -45,7 +45,7 @@
 
       <div style="margin-top: 24px; text-align: center;">
         <span style="color: var(--color-gray-600);">Don't have an account? </span>
-        <NButton text type="primary" @click="router.push('/auth/register')">
+        <NButton text type="primary" @click="goToRegister">
           Sign Up
         </NButton>
       </div>
@@ -61,7 +61,6 @@ definePageMeta({
 })
 
 const router = useRouter()
-const authStore = useAuthStore()
 const message = useMessage()
 
 const formRef = ref()
@@ -94,11 +93,16 @@ const rules = {
   ],
 }
 
+const goToRegister = () => {
+  router.push('/auth/register')
+}
+
 const handleLogin = async () => {
   try {
     await formRef.value?.validate()
     loading.value = true
     
+    const authStore = useAuthStore()
     await authStore.login(formData.email, formData.password)
     
     message.success('Login successful!')

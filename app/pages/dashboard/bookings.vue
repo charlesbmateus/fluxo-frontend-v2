@@ -10,16 +10,16 @@
 
       <NTabs type="card" @update:value="handleTabChange">
         <NTabPane name="all" tab="All Bookings">
-          <BookingsList :bookings="bookingStore.bookings" />
+          <BookingsList :bookings="bookings" />
         </NTabPane>
         <NTabPane name="pending" tab="Pending">
-          <BookingsList :bookings="bookingStore.pendingBookings" />
+          <BookingsList :bookings="pendingBookings" />
         </NTabPane>
         <NTabPane name="confirmed" tab="Confirmed">
-          <BookingsList :bookings="bookingStore.confirmedBookings" />
+          <BookingsList :bookings="confirmedBookings" />
         </NTabPane>
         <NTabPane name="completed" tab="Completed">
-          <BookingsList :bookings="bookingStore.completedBookings" />
+          <BookingsList :bookings="completedBookings" />
         </NTabPane>
       </NTabs>
     </NSpace>
@@ -87,8 +87,6 @@ definePageMeta({
   middleware: 'auth',
 })
 
-const bookingStore = useBookingStore()
-const serviceStore = useServiceStore()
 const message = useMessage()
 
 const showCreateModal = ref(false)
@@ -100,12 +98,12 @@ const bookingForm = reactive({
   notes: '',
 })
 
-const serviceOptions = computed(() =>
-  serviceStore.services.map(s => ({
-    label: s.title,
-    value: s.id,
-  }))
-)
+const bookings = ref([])
+const pendingBookings = computed(() => bookings.value.filter((b: any) => b.status === 'pending'))
+const confirmedBookings = computed(() => bookings.value.filter((b: any) => b.status === 'confirmed'))
+const completedBookings = computed(() => bookings.value.filter((b: any) => b.status === 'completed'))
+
+const serviceOptions = ref([])
 
 const handleTabChange = (value: string) => {
   console.log('Tab changed to:', value)
@@ -113,6 +111,8 @@ const handleTabChange = (value: string) => {
 
 const handleCreateBooking = async () => {
   try {
+    const bookingStore = useBookingStore()
+    
     // Convert timestamps to date/time strings
     const bookingDate = new Date(bookingForm.booking_date!).toISOString().split('T')[0]
     const startTime = new Date(bookingForm.start_time!).toTimeString().split(' ')[0]
@@ -137,6 +137,9 @@ const handleCreateBooking = async () => {
       end_time: null,
       notes: '',
     })
+    
+    // Refresh bookings
+    bookings.value = bookingStore.bookings
   } catch (error) {
     message.error('Failed to create booking')
     console.error(error)
@@ -144,6 +147,15 @@ const handleCreateBooking = async () => {
 }
 
 onMounted(async () => {
+  const bookingStore = useBookingStore()
+  const serviceStore = useServiceStore()
+  
   await serviceStore.fetchServices()
+  serviceOptions.value = serviceStore.services.map(s => ({
+    label: s.title,
+    value: s.id,
+  }))
+  
+  bookings.value = bookingStore.bookings
 })
 </script>
