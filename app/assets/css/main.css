@@ -1,0 +1,91 @@
+:root {
+  /* Primary Colors - Purple */
+  --color-primary-50: #faf5ff;
+  --color-primary-100: #f3e8ff;
+  --color-primary-200: #e9d5ff;
+  --color-primary-300: #d8b4fe;
+  --color-primary-400: #c084fc;
+  --color-primary-500: #a855f7;
+  --color-primary-600: #9333ea;
+  --color-primary-700: #7e22ce;
+  --color-primary-800: #6b21a8;
+  --color-primary-900: #581c87;
+
+  /* Secondary Colors - Yellow */
+  --color-secondary-50: #fefce8;
+  --color-secondary-100: #fef9c3;
+  --color-secondary-200: #fef08a;
+  --color-secondary-300: #fde047;
+  --color-secondary-400: #facc15;
+  --color-secondary-500: #eab308;
+  --color-secondary-600: #ca8a04;
+  --color-secondary-700: #a16207;
+  --color-secondary-800: #854d0e;
+  --color-secondary-900: #713f12;
+
+  /* Neutral Colors */
+  --color-white: #ffffff;
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* Dark mode colors */
+  --color-dark-bg: #0f0f1e;
+  --color-dark-surface: #1a1a2e;
+  --color-dark-surface-hover: #242441;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  line-height: 1.6;
+  color: var(--color-gray-900);
+  background-color: var(--color-white);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode */
+body.dark {
+  color: var(--color-gray-100);
+  background-color: var(--color-dark-bg);
+}
+
+/* Utility classes */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.text-primary {
+  color: var(--color-primary-600);
+}
+
+.text-secondary {
+  color: var(--color-secondary-600);
+}
+
+.bg-primary {
+  background-color: var(--color-primary-600);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary-500);
+}
+
+/* Add smooth transitions */
+a, button, .transition {
+  transition: all 0.3s ease;
+}
